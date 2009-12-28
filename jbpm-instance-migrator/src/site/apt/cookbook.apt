@@ -1,0 +1,147 @@
+Cookbook
+
+* Purpose
+	
+	The purpose of this document is to help a developer create migrations for a JBPM ProcessInstance. 
+	
+* Overview
+
+	The JBPM project allows for simultaneous versions of a ProcessDefinition. Each time a modified ProcessDefinition is deployed, 
+	JBPM will assign a version number to it. It does not delete the previous version/s. Rather, it maintains all of the prior ProcessDefinition 
+	records, and their related ProcessInstance records. This can be very useful for short-lived processes and is the JBPM recommended strategy.
+	
+	For projects that require long-lived processes, this option is not as appealing. For example, new process definitions may contain graph changes 
+	that resolve a bug, or new requirements. Alternatively, old process definitions may reference deprecated or non-existent Actions. The risks 
+	become more pronounced the older the process instance is. In light of these risks, the ability to migrate older process instances is very 
+	desirable. The jbpm-instance-migrator project was created to address this.
+	
+	Given an old process instance (that is, a process instance whose process definition is not the current version), the jbpm-instance-migrator is capable of 
+	migrating the process instance to the latest process instance. A migration performs the following actions:
+
+		[[1]] Checks to determine whether the ProcessInstance actual requires migration. If the process instance refers to the current Process definition, it will not perform a migration and will exit and return the current process instance (the one passed into the migrate method).
+		
+		[[2]] Creates a new ProcessInstance from the latest ProcessDefinition.
+		
+		[[3]] Copies all of the Persisted Variables from the old process instance ExecutionContext into the new process instance.
+		
+		[[4]] Copies all of the Transient Variables from the old process instance Execution Context into the new process instance.
+		
+		[[5]] Adds a migration memo (a String in the persistent variables map) to the new process instance which records info (current date, old version, new version) about the migration. 
+		
+		[[6]] Copies all of the tokens from the old process instance into the new process instance. The migrator uses mappings that a developer provides to determine where old tokens get placed in the new object graph. 
+		
+	This process is performed recursively, so each sub-process is also migrated according the above steps. The migrator is not responsible for persistence 
+	of any kind. The caller assumes responsibility for the persistence of a ProcessInstance. 
+		
+* Mapping Token Nodes
+
+	One of the key challenges when migrating a process instance is the addition and removal of wait state nodes. This is where migrations come into play. 
+	Migrations contain maps that tell the Migrator how to how to get a token from a node in one process to a node in another process. Consider the following 
+	two versions of the Foo process: 
+	
+[fooprocessv1.gif] Foo Process Version 1\
+
+[fooprocessv2.gif] Foo Process Version 2\
+	
+	This example shows two versions of a process instance. Version 1 contains three wait state nodes (A, B, and C). In Version 2, nodes B and C are deprecated and 
+	were replaced with the nodes E and F (we refer to these new nodes as current nodes). In order for the migrator to work, it needs to be told where to place the token 
+	on node B in Version 2. Does it place the token on node A, E, or F? A developer tells the migrator where to place the node by defining a migration which provides a mapping. 
+	We would express the mapping for this migration as: 
+
+----------------	
+{‘B’ => ‘E’, ‘C’ => ‘F’}
+----------------
+	
+* Defining a Migration
+
+	Migrations are written in Java classes. The class must implement the Migration interface, it must not be abstract, and it must contain a default constructor. The Migration 
+	interface declares one method that must be implemented: 
+	
+----------------
+public StateNodeMap createNodeMap();
+----------------	
+
+	Here is how you would express the migration for our example above:
+	
+----------------
+public class FooProcessMigration001 implements Migration{
+	public StateNodeMap createNodeMap() {
+		return new StateNodeMap(new String[][]{{"B", "E"}, {"C", "F"}});
+ 	}
+}
+----------------	
+
+	Note that the map only needs to explain what to do with tokens on deprecated nodes. No mapping is required for the A node because it is not deprecated. By default, if no mapping exists for a wait state node (e.g. it is not deprecated), the migrator will attempt to move the token to a node with the same name in the new version. The FooProcessMigration001 migration class is read by the migrator and tells it everything it needs to know:
+	
+		*	If the migrator encounters a token on node B, it should move it to node E in the new process instance. 
+		*	If the migrator encounters a token on node C, it should move it to node F in the new process instance. 
+		*	Node A is not deprecated, so if the migrator encounters a token on node A, it should put it into node A on the new process instance.
+	
+* Defining a Migrator
+
+	How do we create the migrator and use it to perform a migration? Like this:
+	
+-----------------
+Migrator migrator = new Migrator(“FooProcess”, jbpmContext,	“com.foobar.FooProcessMigration”);
+ProcessInstance newProcess = migrator.migrate(oldProcess);           
+-----------------
+
+	The parameters used to create the Migrator instance are:
+	
+		[[1]]	The name of the ProcessDefinition that it will be migrating.
+		[[2]]	A JbpmContext instance. The migrator requires this to look up the latest ProcessDefinition. 
+		[[3]]	The Migration base class name. The migrator works by convention, assuming that your migrations use the pattern: package.ClassName[0-9]{3}. For the base Class name “com.foobar.FooProcessMigration”, the migrator will attempt to load “com.foobar.FooProcessMigration001”, “com.foobar.FooProcessMigration002”, etc, until it can’t find any valid classes. Alternatively, the constructor is overloaded so that you can provide an array of Migration classes. In most cases, following the convention and providing a base class name will require less maintenance on behalf of the developer.
+
+	The migrator analyzes each and every Migration in order and compiles a composite map. For example, consider the following individual migrations:
+
+-----------------
+{‘B’ => ‘E’, ‘C’ => ‘F’} 	#Migration 001
+{‘A’ => ‘G’ } 			#Migration 002
+{‘E’ => ‘X’, ‘F’ => ‘Y’} 	#Migration 003
+-----------------
+
+	The Migrator would compile a composite map that looks like this: {‘B’ => ‘X’, ‘E’ => ‘X’, ‘C’ => ‘Y’, ‘F’ => ‘Y’, ‘A’ => ‘G’}
+
+	Using this composite map, the migrator can map any outdated process instance to the current version. As a consequence, the migrator does not need to keep track of process definition versions. As long as you have recorded deprecated nodes in a migration, the migrator will be able to perform its job. There are some rules that the migrator enforces:
+
+		[[1]]	You cannot rename or remove a wait state node without providing a migration.
+		[[2]]	You cannot re-introduce a deprecated node. Once a node has been deprecated, it’s never to be used again in the ProcessDefinition. Ever!!!
+		[[3]]	As mentioned earlier, you do not need to map non wait state nodes. For example, a Node type of node (one that performs actions, but never contains a token) does not need to be mapped. The migrator will never be required to migrate a token from this type of node.
+			
+		
+* Sub Process Migrations
+
+	
+	Jbpm processes can contain sub processes. Obviously, if you are migrating a super process, you will need to migrate any sub processes as well. This is easily accomplished by providing the super process migrator class with a migrator for any sub processes that it will encounter. For example, let’s assume that our Foo process contains a sub process called Bar.  You would start by creating a migrator for the Bar sub process:
+
+-----------------
+Migrator barMigrator = new Migrator(“Bar”, jbpmcontext, “com.foobar.BarProcessMigration”);        
+Migrator fooMigrator = new Migrator(“Foo”, jbpmcontext, “com.foobar.FooProcessMigration”, new Migrator[]{barMigrator});        
+
+ProcessInstance newFooProcess = fooMigrator.migrate(oldFooProcess);             
+-----------------
+
+	In this case, you pass the foo super process instance to the fooMigrator. If the foo super process contains a bar sub process (that is, if there is a token on the bar sub process node), than the fooMigrator will pass the bar sub process to the bar migrator. This is recursive, so you can nest as many migrators as you need.
+	
+
+* Super State Migrations
+
+	Jbpm process definitions can contain Super States. Nodes are mapped hierarchically if contained in a super state node. Assume a developer is creating a new version a process definition, and decides that the wait state node bar should be wrapped by a super state node named foo. This mapping would look like:
+
+-----------------
+{‘bar’ => ‘foo/bar’}
+-----------------
+
+	Likewise, if the foo super state was being removed, the mapping would be represented as:
+
+-----------------
+{‘foo/bar’ => ‘bar’}
+-----------------
+
+	Finally, if the bar node name resides in the foo super state, and is to be renamed baz, the mapping would be represented as:
+
+-----------------
+{‘foo/bar’ => ‘foo/baz’}
+-----------------
+	
+	[]

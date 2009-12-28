@@ -1,0 +1,8 @@
+~~see http://maven.apache.org/doxia/format.html for info on the APT format
+Jbpm-Migrator
+ 
+  The jbpm-instance-migrator project is used to migrate jbpm process instances dynamically at runtime. 
+  
+  	* {{{cookbook.html}Cookbook}}
+ 
+   []

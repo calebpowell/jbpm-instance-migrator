@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<process-definition xmlns='urn:jbpm.org:jpdl-3.2' name='simpleSubProcess'>
+	<start-state name='start'>
+		<transition name='to_Sub1' to='Sub1' />
+	</start-state>
+
+	<state name='Sub1'>
+		<transition name='to_SubB' to='SubB'/>
+	</state>
+	
+	<state name='SubB'>
+		<transition name='to_end' to='end' />
+	</state>
+	
+	<end-state name='end' />
+</process-definition>
+	

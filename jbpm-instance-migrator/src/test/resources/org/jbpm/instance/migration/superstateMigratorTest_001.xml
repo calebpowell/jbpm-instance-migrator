@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns='urn:jbpm.org:jpdl-3.2' name="superStateMigratorTestProcessDefinition">
+
+
+	<start-state name="Start">
+		<transition to="Saving" name="save"></transition>
+	</start-state>
+
+	<node name="Saving">
+      <event type="node-enter">
+      </event>
+      <transition name="" to="Saved"></transition>
+   </node>
+
+	<state name="Saved">
+		<transition to="Deleted" name="cancel">
+		</transition>
+	</state>
+
+
+	<end-state name="Deleted"></end-state>
+
+
+</process-definition>

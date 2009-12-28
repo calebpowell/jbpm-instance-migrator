@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<process-definition xmlns='urn:jbpm.org:jpdl-3.2' name='migratorValidityTestProcessDefinition_001'>
+	<start-state name='start'>
+		<transition name='firstSuperStateNode/to_first' to='first'>
+		</transition>
+	</start-state>
+	
+	<super-state name="firstSuperStateNode">
+		<state name='first'>
+			<transition name='../to_Fork1' to='Fork1'/>
+		</state>
+	</super-state>
+
+	<fork name="Fork1">
+		<transition name="to_forkNode1" to="forkNodeOne"></transition>
+		<transition name="to_forkNode2" to="nonWaitStateNode"></transition>
+		<transition name="to_forkNode3" to="forkNodeThree"></transition>
+	</fork>
+		<state name='forkNodeOne'>
+			<transition name='to_Join1' to='Join1' />
+		</state>
+
+		<super-state name="nonWaitSuperStateNode">
+			<node name='nonWaitStateNode'>
+				<transition name='to_Join1' to='Join1' />
+			</node>
+		</super-state>
+		<state name='forkNodeThree'>
+			<transition name='to_Join1' to='Join1' />
+		</state>
+	<join name="Join1">
+		<transition to="second"></transition>
+	</join>
+	
+	
+	<super-state name="validSuperStateNode">
+		<state name='validCurrentNode1'>
+			<transition name='to_third' to='third' />
+		</state>
+	</super-state>
+
+	<state name='third'>
+		<transition name='to_end' to='end' />
+	</state>
+	
+	<end-state name='end'></end-state>
+</process-definition>
+	
