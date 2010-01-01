@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<process-definition xmlns='urn:jbpm.org:jpdl-3.2' name='taskNodeProcess'>
+
+	<start-state name='start'>
+		<transition name='to_ATaskNode' to='ATaskNode'>
+		</transition>
+	</start-state>
+	
+	<task-node name='ATaskNode'>
+		<task name='foo' />
+		<transition name='to_end' to='end'/>
+	</task-node>
+	
+	<end-state name='end'></end-state>
+</process-definition>
+	

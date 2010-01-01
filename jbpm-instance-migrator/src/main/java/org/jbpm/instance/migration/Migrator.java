@@ -47,6 +47,7 @@ import org.jbpm.graph.node.Join;
 import org.jbpm.graph.node.ProcessState;
 import org.jbpm.graph.node.StartState;
 import org.jbpm.graph.node.State;
+import org.jbpm.graph.node.TaskNode;
 import org.jbpm.instance.migration.util.JbpmInstanceMigratorLogger;
 
 
@@ -75,6 +76,7 @@ public class Migrator {
 		add(Join.class);
 		add(ProcessState.class);
 		add(SuperState.class);
+		add(TaskNode.class);
 	}};
 
 	/**
@@ -223,6 +225,9 @@ public class Migrator {
 		if(oldToken.getSubProcessInstance() != null) {
 			mapSubProcess(oldToken, newToken);
 		}
+//		if(toNode instanceof TaskNode){
+//			((TaskNode) toNode).
+//		}
 	}
 
 	private Token createNewToken(Token parentToken, Token oldToken, ProcessInstance newInstance, Node toNode) {
@@ -273,12 +278,11 @@ public class Migrator {
 	}
 
 	private Node findCurrentNode(Token oldProcessToken) {
-		ProcessDefinition targetDefinition = MigrationUtils.findLatestProcessDefinition(oldProcessToken.getProcessInstance().getProcessDefinition().getName(), jbpmContext);
 		String nodeName = oldProcessToken.getNode().getFullyQualifiedName();
 		String currentNodeName = this.compositeNodeMap.containsDeprecatedNodeName(nodeName) ? this.compositeNodeMap.getCurrentNodeName(nodeName) : nodeName;
 		logger.debug(getProcessDefinitionName()+" Migrator.findCurrentNode: mapping '"+nodeName+"' => '"+currentNodeName+"'");
-		Node toNode = targetDefinition.findNode(currentNodeName);
-		return toNode;
+		ProcessDefinition targetDefinition = MigrationUtils.findLatestProcessDefinition(oldProcessToken.getProcessInstance().getProcessDefinition().getName(), jbpmContext);
+		return targetDefinition.findNode(currentNodeName);
 	}
 
 	private String getProcessDefinitionName() {
