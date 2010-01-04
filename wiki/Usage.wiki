@@ -1,0 +1,21 @@
+#summary jbpm-instance-migrator usage
+
+= Introduction =
+
+The following page explains how to use the jbpm-instance-migrator library. 
+
+* Defining a Migration
+
+Migrations are written as Java classes. The class must implement the org.jbpm.instance.migration.Migration interface, it must not be abstract, and it must contain a default constructor. The Migration interface declares one method that must be implemented called 'createNodeMap()', whose return value is an instance of a StateNodeMap. A StateNodeMap is used by a migrator to determine which nodes have been deprecated and which nodes have superseded the deprecated nodes. In the following __ApplicationProcessMigration001__ migration, the __init__ node has been deprecate and superseded by the __start__ node:
+
+{{{
+public class ApplicationProcessMigration001 implements Migration{
+   
+   public StateNodeMap createNodeMap() {
+       return new StateNodeMap(new String[][]{
+               {"init", "start"}       
+       });
+   }
+}
+
+}}}
