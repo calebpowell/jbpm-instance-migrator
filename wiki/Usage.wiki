@@ -19,3 +19,18 @@ public class ApplicationProcessMigration001 implements Migration{
 }
 
 }}}
+
+* Defining a Migrator
+
+A Migrator can be created and used as follows:
+
+{{{
+Migrator migrator = new Migrator(“ApplicationProcess”, jbpmContext, “com.foobar.ApplicationProcessMigration”);
+ProcessInstance newProcessInstance = migrator.migrate(oldProcessInstance);
+}}}
+
+The parameters used to create the Migrator instance are:
+
+  # The name of the Process Definition that it will be migrating.
+  # A JbpmContext instance. The migrator requires this to look up the latest Process Definition.
+  # The Migration base class name. The migrator assumes that your migrations use the pattern __package.ClassName{migration#}__. For the base Class name “com.foobar.ApplicationProcessMigration”, the migrator will attempt to load and instantiate classes named “com.foobar.ApplicationProcessMigration001”, “com.foobar.ApplicationProcessMigration002”, etc, until it can’t find any valid classes.
