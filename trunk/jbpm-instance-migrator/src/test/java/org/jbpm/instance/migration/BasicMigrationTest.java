@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
+import org.jmock.Mock;
 
 
 /**
@@ -167,6 +168,22 @@ public class BasicMigrationTest extends BaseTestCase {
 
 	public void testNoMigrations() throws Exception {
 		new Migrator("", this.jbpmContext, (Migration[])null, (Migrator[])null);
+	}
+	
+	public void test_that_all_of_the_register_handlers_are_invoked_by_the_migration_method() throws Exception {
+		deployV1Definitions();
+		ProcessInstance processInstance1 = findLatestProcessDefinition("simple").createProcessInstance();
+		deployV2Definitions();
+		
+		Migrator migrator = createSimpleProcessDefinitionMigrator();
+		Mock handler1 = mock(MigrationHandler.class);
+		handler1.expects(once()).method("migrateInstance").with(same(processInstance1), isA(ProcessInstance.class));
+		Mock handler2 = mock(MigrationHandler.class);
+		handler2.expects(once()).method("migrateInstance").with(same(processInstance1), isA(ProcessInstance.class));
+		
+		migrator.addMigrationHandler((MigrationHandler)handler1.proxy());
+		migrator.addMigrationHandler((MigrationHandler)handler2.proxy());
+		migrator.migrate(processInstance1);
 	}
 	
 	private Migrator createSimpleProcessDefinitionMigrator() throws InvalidMigrationException {
