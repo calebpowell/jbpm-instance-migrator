@@ -20,11 +20,13 @@
  */
 package org.jbpm.instance.migration;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -66,6 +68,7 @@ public class Migrator {
 	private final JbpmContext jbpmContext;
 	private final String processDefinitionName;
 	private final StateNodeMap compositeNodeMap = new StateNodeMap();
+	private final List migrationHandlers = new ArrayList();
 	public static Set SUPPORTED_WAIT_STATE_NODE_TYPES = new HashSet(){
 		private static final long serialVersionUID = 9100798202825510066L;
 	{
@@ -130,22 +133,30 @@ public class Migrator {
 	/**
 	 * Migrates the ProcessInstance instance to the latest version.
 	 * @param processInstance The processInstance that you wish to migrate.
-	 * @return A migrated processInstance based on the latest version of this Migrator's ProcessDefinition.
+	 * @return A migrated processInstance based on the latest version of this Migrator's ProcessDefinition. If the processInstance does not require migration,
+	 * this method will return the provided processInstance object.
 	 * @throws InvalidMigrationException
 	 */
 	public ProcessInstance migrate(ProcessInstance processInstance) {
-		if(!processInstance.getProcessDefinition().getName().equals(getProcessDefinitionName())){
+		if(!willMigrate(processInstance.getProcessDefinition())){
 			String errorMessage = "The "+getProcessDefinitionName()+" migrator cannot migrate a processInstance of the "+processInstance.getProcessDefinition().getName()+" ProcessDefinition!";
 			logger.error(errorMessage);
 			throw new IllegalArgumentException(errorMessage);
 		}
 		
+		ProcessInstance newProcessInstance = null;
 		if(processRequiresMigration(processInstance, jbpmContext)) {
 			logger.info(getProcessDefinitionName()+" Migrator attempting to migrate processInstance[@id="+processInstance.getId()+"].");
-			processInstance = migrateOldProcessInstance(processInstance);
+			newProcessInstance = migrateOldProcessInstance(processInstance);
+			for (Iterator iterator = migrationHandlers.iterator(); iterator.hasNext();) {
+				MigrationHandler migrationHandler = (MigrationHandler) iterator.next();
+				migrationHandler.migrateInstance(processInstance, newProcessInstance);
+			}
 			logger.info(getProcessDefinitionName()+" Migrator finished migration of processInstance[@id="+processInstance.getId()+"].");
+		} else {
+			newProcessInstance = processInstance;
 		}
-		return processInstance;
+		return newProcessInstance;
 	}
 
 	/**
@@ -225,9 +236,6 @@ public class Migrator {
 		if(oldToken.getSubProcessInstance() != null) {
 			mapSubProcess(oldToken, newToken);
 		}
-//		if(toNode instanceof TaskNode){
-//			((TaskNode) toNode).
-//		}
 	}
 
 	private Token createNewToken(Token parentToken, Token oldToken, ProcessInstance newInstance, Node toNode) {
@@ -306,5 +314,9 @@ public class Migrator {
 	 */
 	public StateNodeMap getStateNodeMap() {
 		return this.compositeNodeMap;
+	}
+
+	public void addMigrationHandler(MigrationHandler migrationHandler) {
+		this.migrationHandlers.add(migrationHandler);
 	}
 }
