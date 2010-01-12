@@ -43,7 +43,7 @@ import org.jbpm.instance.migration.util.JbpmInstanceMigratorLogger;
  * Provides utility methods to the Migrator class.
  * 
  * @see Migrator
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class MigrationUtils {

@@ -26,7 +26,7 @@ import org.jmock.cglib.MockObjectTestCase;
 
 /**
  * 
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class MigrationComparatorTest extends MockObjectTestCase {

@@ -29,7 +29,7 @@ import org.jmock.cglib.MockObjectTestCase;
 /**
  * Abstract base class for the jbpm-migrator project. Performs Hibernate and Log4J configurations.
  * @see HibernateTestSupport
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public abstract class BaseTestCase extends MockObjectTestCase {

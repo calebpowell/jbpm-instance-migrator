@@ -24,12 +24,13 @@ import java.io.IOException;
 
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.exe.ProcessInstance;
+import org.jbpm.instance.migration.handler.MigrationHandler;
 import org.jmock.Mock;
 
 
 /**
  * 
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class BasicMigrationTest extends BaseTestCase {

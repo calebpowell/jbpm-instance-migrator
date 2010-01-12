@@ -29,7 +29,7 @@ import org.jbpm.instance.migration.MigrationUtils;
 
 /**
  * 
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class MigrationUtilsTest extends BaseTestCase {

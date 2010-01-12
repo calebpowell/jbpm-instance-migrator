@@ -24,7 +24,7 @@ package org.jbpm.instance.migration;
 /**
  * Defines the interface for an individual Migration Class. Classes that implement this interface can 
  * be read from a Migrator.
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public interface Migration {

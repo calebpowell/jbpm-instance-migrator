@@ -26,7 +26,7 @@ import java.util.Comparator;
  * A comparator that compares Migration instances based on their revision.
  * 
  * @see Migration
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class MigrationComparator implements Comparator {
