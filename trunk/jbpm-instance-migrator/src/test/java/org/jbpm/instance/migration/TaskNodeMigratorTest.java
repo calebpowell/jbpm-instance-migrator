@@ -28,7 +28,7 @@ import org.jbpm.graph.node.TaskNode;
 
 /**
  * 
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  */
 public class TaskNodeMigratorTest extends BaseTestCase {
 

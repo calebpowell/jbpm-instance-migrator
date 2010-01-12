@@ -31,7 +31,7 @@ import junit.framework.TestCase;
 
 /**
  * 
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public abstract class JbpmInstanceMigratorBaseTest extends TestCase {

@@ -32,7 +32,7 @@ import org.jbpm.instance.migration.StateNodeMap;
 
 /**
  * 
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class SuperstateMigratorTest extends BaseTestCase {

@@ -31,7 +31,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 /**
  * A utility class to provide Hibernate support in unit tests.
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class HibernateTestSupport {

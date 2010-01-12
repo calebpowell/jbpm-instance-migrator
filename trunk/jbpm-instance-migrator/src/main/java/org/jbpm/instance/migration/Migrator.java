@@ -50,13 +50,14 @@ import org.jbpm.graph.node.ProcessState;
 import org.jbpm.graph.node.StartState;
 import org.jbpm.graph.node.State;
 import org.jbpm.graph.node.TaskNode;
+import org.jbpm.instance.migration.handler.MigrationHandler;
 import org.jbpm.instance.migration.util.JbpmInstanceMigratorLogger;
 
 
 
 /**
  * An instance of this class is responsible for migrating a process instance to te latest version. 
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class Migrator {

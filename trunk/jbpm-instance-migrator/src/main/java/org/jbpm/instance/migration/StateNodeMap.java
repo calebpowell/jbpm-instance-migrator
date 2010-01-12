@@ -32,7 +32,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * This class is used to compile a list of node name mappings for one or more Migrations.
  * It is is backed by a synchronized {@link HashMap}
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class StateNodeMap {

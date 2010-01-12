@@ -23,7 +23,7 @@ package org.jbpm.instance.migration;
 /**
  * A {@link RuntimeException} that indicates a problem with a Migration implementation.
  * @see Migration
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class InvalidMigrationException extends RuntimeException {

@@ -22,7 +22,7 @@ package org.jbpm.instance.migration.util;
 
 /**
  * Used for Logging purposes only. Projects that use the jbpm-migrator project can configure it's log4j log output by referrin to this class.
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class JbpmInstanceMigratorLogger {

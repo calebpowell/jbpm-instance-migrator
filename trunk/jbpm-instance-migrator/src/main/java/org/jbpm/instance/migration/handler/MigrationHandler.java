@@ -1,4 +1,4 @@
-package org.jbpm.instance.migration;
+package org.jbpm.instance.migration.handler;
 
 import org.jbpm.graph.exe.ProcessInstance;
 

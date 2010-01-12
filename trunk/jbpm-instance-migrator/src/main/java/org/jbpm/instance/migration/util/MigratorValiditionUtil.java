@@ -33,7 +33,7 @@ import org.jbpm.instance.migration.Migrator;
 
 /**
  * Contains utility methods used to validate a {@link Migrator}.
- * @author Caleb Powell <caleb.powell@intelliware.ca> 
+ * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
 public class MigratorValiditionUtil {
