@@ -1,4 +1,4 @@
-#summary jbpm-instance-migrator usage
+#summary Usage Instructions for the jbpm-instance-migrator
 
 = Introduction =
 
