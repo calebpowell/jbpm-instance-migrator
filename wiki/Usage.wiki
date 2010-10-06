@@ -46,3 +46,22 @@ public class ApplicationProcessMigration001 implements Migration{
 So, if a migrator is passed a ProcessInstance that has a token in an 'init' state node, the migrator will create new ProcessInstance (based on the latest ProcessDefinition), and create a token in it's 'start' state node. 
 
 * Extensions
+
+If order to address any custom requirement you may have, the migrator allows you to add 1 or more MigrationHandler implementations. The MigrationHandler interface looks like this:
+
+{{{
+public interface MigrationHandler {
+
+    public void migrateInstance(ProcessInstance oldProcessInstance, ProcessInstance newProcessInstance);
+   
+}
+}}}
+
+you can add your custom implementations to the migrator instance like so:
+
+{{{
+MigrationHandler customMigrationHandler = new MyCustomMigrationHandler();
+migrator.addMigrationHandler(customMigrationHandler);
+}}}  
+
+The MigrationHandler instances are stored in a list and will be invoked in the order that you add them.
