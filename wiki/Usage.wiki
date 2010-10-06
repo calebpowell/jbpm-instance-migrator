@@ -25,11 +25,11 @@ Once you have instantiated a migrator, you invoke the _migrate()_ method and pas
 ProcessInstance newProcessInstance = migrator.migrate(oldProcessInstance);
 }}}
 
-The _migrate()_ method will create and return a new ProcessInstance based on the latest ProcesDefinition. The new ProcessInstance will contain a new ContextInstance and tokens in the appropriate state nodes.
+The _migrate()_ method will create and return a new ProcessInstance based on the latest ProcessDefinition. The new ProcessInstance will contain a new ContextInstance and tokens in the appropriate state nodes.
  
 * Defining a Migration
 
-Migrations are written as Java classes, loaded and then appliedby a Migrator. The class must implement the org.jbpm.instance.migration.Migration interface, it must not be abstract, and it must contain a default constructor. The Migration interface declares one method called 'createNodeMap()', whose return value is an instance of a StateNodeMap. A StateNodeMap is used by a migrator to determine which nodes have been deprecated and which nodes have superseded the deprecated nodes. In the following __ApplicationProcessMigration001__ migration, the __init__ node has been deprecate and superseded by the __start__ node:
+Migrations are written as Java classes, loaded and then applied by a Migrator. The class must implement the org.jbpm.instance.migration.Migration interface, it must not be abstract, and it must contain a default constructor. The Migration interface declares one method called 'createNodeMap()', whose return value is an instance of a StateNodeMap. A StateNodeMap is used by a migrator to determine which nodes have been deprecated and which nodes have superseded the deprecated nodes. In the following __ApplicationProcessMigration001__ migration, the __init__ node has been deprecate and superseded by the __start__ node:
 
 {{{
 public class ApplicationProcessMigration001 implements Migration{
@@ -57,7 +57,7 @@ public interface MigrationHandler {
 }
 }}}
 
-you can add your custom implementations to the migrator instance like so:
+You can add your custom implementations to the migrator instance like so:
 
 {{{
 MigrationHandler customMigrationHandler = new MyCustomMigrationHandler();
