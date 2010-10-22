@@ -32,11 +32,13 @@
   	</license>
   </licenses>
   
-  <scm>
+  <!--<scm>
 	<connection>scm:svn:https://svn.jboss.org/repos/jbpm/projects/instance-migration</connection>
 	<developerConnection>scm:svn:https://svn.jboss.org/repos/jbpm/projects/instance-migration</developerConnection>
 	<url>scm:svn:https://svn.jboss.org/repos/jbpm/projects/instance-migration</url>
   </scm>
+  
+  -->
   
   <build>
     <plugins>
@@ -85,20 +87,31 @@
 		   </plugins>
 	  </pluginManagement>
   </build>
+  
+  <!--
 
   <distributionManagement>
 		<repository>
-			<id>intelliwareReleases</id>
-			<name>Intelliware Releases</name>
-			<url>dav:http://mvnrepo.intelliware.ca/release</url>
 		</repository>
 		<snapshotRepository>
-			<id>intelliwareSnapshots</id>
-			<name>Intelliware Snapshots</name>
-			<url>dav:http://mvnrepo.intelliware.ca/snapshot</url>
             <uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
-  </distributionManagement>   
+  </distributionManagement>
+  -->
+  
+  <repositories>
+  	<repository>
+  		<id>jboss</id>
+  		<name>JBoss Repository</name>
+  		<url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+  		<releases>
+  			<updatePolicy>never</updatePolicy>
+  		</releases>
+  		<snapshots>
+  			<enabled>false</enabled>
+  		</snapshots>
+  	</repository>
+  </repositories>   
   
   <pluginRepositories>
   	<pluginRepository>
@@ -117,11 +130,17 @@
 	  <artifactId>log4j</artifactId>
 	  <version>1.2.6</version>
 	</dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>jbpm</groupId>
       <artifactId>jbpm-jpdl</artifactId>
       <version>3.2.2</version>
     </dependency>
+    -->
+    <dependency>
+	  <groupId>org.jbpm</groupId>
+	  <artifactId>jbpm-jpdl</artifactId>
+	  <version>3.2.2</version>
+	</dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
