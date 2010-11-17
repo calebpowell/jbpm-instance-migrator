@@ -48,6 +48,7 @@ import org.jbpm.instance.migration.util.JbpmInstanceMigratorLogger;
  */
 public class MigrationUtils {
 	
+	private static final String JAVA_SYNTAX_PREFIX = "java://";
 	private static Logger logger = Logger.getLogger(JbpmInstanceMigratorLogger.class);
 	
 	/**
@@ -116,7 +117,20 @@ public class MigrationUtils {
 	 * @return true is this class is an assignable to {@link Migration}, is not an interface, and is not abstract.
 	 */
 	private static boolean isValidMigration(Class migrationClass) {
-		return Migration.class.isAssignableFrom(migrationClass) && !migrationClass.isInterface() && !Modifier.isAbstract(migrationClass.getModifiers());
+		return Migration.class.isAssignableFrom(migrationClass) && isConcreteClass(migrationClass);
+	}
+
+	/**
+	 * 
+	 * @param migrationClass
+	 * @return true is this class is an assignable to {@link DynamicMigration}, is not an interface, and is not abstract.
+	 */
+	private static boolean isValidDynamicMigration(Class migrationClass) {
+		return DynamicMigration.class.isAssignableFrom(migrationClass) && isConcreteClass(migrationClass);
+	}
+	
+	private static boolean isConcreteClass(Class type){
+		return !type.isInterface() && !Modifier.isAbstract(type.getModifiers());
 	}
 
 	/**
@@ -166,5 +180,59 @@ public class MigrationUtils {
 	 */
 	public static ProcessDefinition findLatestProcessDefinition(String processName, JbpmContext jbpmContext) {
 		return jbpmContext.getGraphSession().findLatestProcessDefinition(processName);
+	}
+
+	/**
+	 * 
+	 * @param className
+	 * @return
+	 */
+	public static DynamicMigration lookupDynamicMigration(String migrationClassName) {
+		try {
+			Class migrationClass = Class.forName(migrationClassName);
+			if (isValidDynamicMigration(migrationClass)) {
+				return (DynamicMigration) migrationClass.newInstance();
+			} else{
+				String errorMessage = "The type '" + migrationClassName + "' is not a valid DynamicMigration. Please ensure your Class  implements '" +
+						DynamicMigration.class.getName() + "', is not abstract and contains a default constructor.";
+				logger.error(errorMessage);
+				throw new InvalidMigrationException(errorMessage);
+			}
+		} catch (ClassNotFoundException e) {
+			String errorMessage = "Could not locate DynamicMigration Class name [" + migrationClassName + "].";
+			logger.error(errorMessage);
+			throw new InvalidMigrationException(errorMessage, e);
+		} catch (InstantiationException e) {
+			String errorMessage = "The " + migrationClassName + " migration could not be instantiated. Please ensure it has a default constructor.";
+			logger.error(errorMessage, e);
+			throw new InvalidMigrationException(errorMessage, e);
+		} catch (IllegalAccessException e) {
+			String errorMessage = "The " + migrationClassName + " migration could not be instantiated.";
+			logger.error(errorMessage, e);
+			throw new InvalidMigrationException(errorMessage, e);
+		}
+	}
+
+	/**
+	 * 
+	 * @param currentNodeName
+	 * @return true if the <i>currentNodeName</i> parameter is not null and starts with "java://".
+	 */
+	static boolean isDynamicNodeName(String currentNodeName) {
+		return currentNodeName != null && currentNodeName.startsWith(JAVA_SYNTAX_PREFIX);
+	}
+
+	/**
+	 * Convenience method to parse the Class name from a dynamic node name. This method expects the 
+	 * <i>dynamicNodeName</i> parameter to be in the format <i>java://{class name}</i>.
+	 * 
+	 * This method delegates to the org.apache.commons.lang.StringUtils.substringAfter() method. When given a 
+	 * <code>null</code> string input will return <code>null</code>. An empty ("") string input will return the 
+	 * empty string. A <code>null</code> separator will return the empty string if the input string is not <code>null</code>.
+	 * @param dynamicNodeName
+	 * @return
+	 */
+	public static String parseClassNameFromDynamicNode(String dynamicNodeName) {
+		return StringUtils.substringAfter(dynamicNodeName, JAVA_SYNTAX_PREFIX);
 	}
 }

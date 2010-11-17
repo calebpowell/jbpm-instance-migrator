@@ -20,6 +20,7 @@
  */
 package org.jbpm.instance.migration;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -29,7 +30,9 @@ import java.util.Comparator;
  * @author Caleb Powell <caleb.powell@gmail.com> 
  * @author David Harcombe <david.harcombe@intelliware.ca> 
  */
-public class MigrationComparator implements Comparator {
+public class MigrationComparator implements Comparator, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public int compare(Object o1, Object o2) {
 		Migration migration1 = (Migration) o1;
