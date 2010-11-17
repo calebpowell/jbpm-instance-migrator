@@ -290,6 +290,17 @@ public class Migrator {
 		String nodeName = oldProcessToken.getNode().getFullyQualifiedName();
 		String currentNodeName = this.compositeNodeMap.containsDeprecatedNodeName(nodeName) ? this.compositeNodeMap.getCurrentNodeName(nodeName) : nodeName;
 		logger.debug(getProcessDefinitionName()+" Migrator.findCurrentNode: mapping '"+nodeName+"' => '"+currentNodeName+"'");
+		if (MigrationUtils.isDynamicNodeName(currentNodeName)){
+			//parse className
+			String migrationClassName = MigrationUtils.parseClassNameFromDynamicNode(currentNodeName);
+			
+			//instantiate the DynamicMigration
+			DynamicMigration dynamicMigration = MigrationUtils.lookupDynamicMigration(migrationClassName);
+			
+			//invoke DynamicMigration instance and assign the node name
+			currentNodeName = dynamicMigration.map(nodeName, oldProcessToken.getProcessInstance());
+		} 
+		
 		ProcessDefinition targetDefinition = MigrationUtils.findLatestProcessDefinition(oldProcessToken.getProcessInstance().getProcessDefinition().getName(), jbpmContext);
 		return targetDefinition.findNode(currentNodeName);
 	}

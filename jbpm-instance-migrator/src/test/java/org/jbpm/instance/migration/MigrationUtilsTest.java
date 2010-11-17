@@ -74,6 +74,69 @@ public class MigrationUtilsTest extends BaseTestCase {
 		
 	}
 	
+	public void testThatThe_lookupDynamicMigration_methodReturnsTheCorrectClassName(){
+		DynamicMigration dynamicMigration = 
+			MigrationUtils.lookupDynamicMigration("org.jbpm.instance.migration.DynamicMigrationForTesting");
+		assertNotNull(dynamicMigration);
+		assertEquals(DynamicMigrationForTesting.class, dynamicMigration.getClass());
+	}
+
+	//TODO: Would be better if you could generate these various classes at runtime. Look into a class generation library.
+	public void testThatThe_lookupDynamicMigration_throwsAnInvalidMigrationExceptionForInvalidScenarios(){
+		try {
+			MigrationUtils.lookupDynamicMigration("org.jbpm.instance.migration.NonExistentDynamicMigration");
+			fail("Non-existent Class type. Expected an '" + InvalidMigrationException.class.getName() + "'");
+		} catch (InvalidMigrationException e) {
+			//expected
+		}
+
+		try {
+			MigrationUtils.lookupDynamicMigration("org.jbpm.instance.migration.DynamicMigration");
+			fail("Interface is not a valid type. Expected an '" + InvalidMigrationException.class.getName() + "'");
+		} catch (InvalidMigrationException e) {
+			//expected
+		}
+
+		try {
+			MigrationUtils.lookupDynamicMigration("org.jbpm.instance.migration.AbstractDynamicMigrationForTesting");
+			fail("Abstract class is not a valid type. Expected an '" + InvalidMigrationException.class.getName() + "'");
+		} catch (InvalidMigrationException e) {
+			//expected
+		}
+
+		try {
+			MigrationUtils.lookupDynamicMigration("org.jbpm.instance.migration.NoDefaultConstructorDynamicMigrationForTesting");
+			fail("A DynamicMigration inplementation must have a default constructor. Expected an '" + InvalidMigrationException.class.getName() + "'");
+		} catch (InvalidMigrationException e) {
+			//expected
+		}
+		
+	}
+	
+	public void testThatThe_isDynamicNodeName_methodIsCorrect(){
+		assertTrue(MigrationUtils.isDynamicNodeName("java://org.jbpm.instance.migration.DynamicMigrationForTesting"));
+		
+		assertFalse(MigrationUtils.isDynamicNodeName("org.jbpm.instance.migration.DynamicMigrationForTesting"));
+		assertFalse(MigrationUtils.isDynamicNodeName(null));
+		assertFalse(MigrationUtils.isDynamicNodeName(""));
+		assertFalse(MigrationUtils.isDynamicNodeName(" "));
+	}
+
+	public void testThatThe_parseClassNameFromDynamicNode_methodIsCorrect(){
+		assertEquals("org.jbpm.instance.migration.DynamicMigrationForTesting",
+				MigrationUtils.parseClassNameFromDynamicNode("java://org.jbpm.instance.migration.DynamicMigrationForTesting"));
+		
+		assertEquals("",
+				MigrationUtils.parseClassNameFromDynamicNode("org.jbpm.instance.migration.DynamicMigrationForTesting"));
+		
+		assertEquals("",
+				MigrationUtils.parseClassNameFromDynamicNode(""));
+
+		assertEquals(null,
+				MigrationUtils.parseClassNameFromDynamicNode(null));
+		
+	}
+	
 	private void deployV1Definitions() throws IOException {
 		jbpmContext.deployProcessDefinition(MigrationUtils.getProcessDefinition("simpleSubProcessDefinition_001.xml"));
 		jbpmContext.deployProcessDefinition(MigrationUtils.getProcessDefinition("simpleSuperProcessDefinition_001.xml"));
