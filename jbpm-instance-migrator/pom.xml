@@ -8,7 +8,7 @@
   <organization>
   	<name>JBoss Inc.</name>
   </organization>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.2-SNAPSHOT</version>
   <description>A tool used to migrate jbpm ProcessInstance's.</description>
   <url></url>
 
@@ -66,6 +66,7 @@
 		</configuration>
 	  </plugin>
       <plugin>
+        <!--`mvn org.nuiton:maven-license-plugin:2.0.0:update-header`  -->
       	<groupId>org.nuiton</groupId>
       	<artifactId>maven-license-plugin</artifactId>
       	<version>2.0.0</version>
@@ -130,12 +131,6 @@
 	  <artifactId>log4j</artifactId>
 	  <version>1.2.6</version>
 	</dependency>
-    <!--<dependency>
-      <groupId>jbpm</groupId>
-      <artifactId>jbpm-jpdl</artifactId>
-      <version>3.2.2</version>
-    </dependency>
-    -->
     <dependency>
 	  <groupId>org.jbpm</groupId>
 	  <artifactId>jbpm-jpdl</artifactId>

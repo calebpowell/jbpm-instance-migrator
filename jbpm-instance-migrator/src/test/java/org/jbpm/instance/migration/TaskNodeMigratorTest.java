@@ -1,7 +1,7 @@
 /*
  * *##% 
  * jBPM Instance Migrator
- * Copyright (C) null - 2009 JBoss Inc.
+ * Copyright (C) null - 2010 JBoss Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
